@@ -1,0 +1,342 @@
+% !TEX program = xelatex
+% LF-ASSA poster for ACM MM (A0 portrait, 841mm x 1189mm), compiled with xelatex
+\documentclass[final,t]{beamer}
+\usepackage[orientation=portrait,size=a0,scale=1.0]{beamerposter}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{iftex}
+\RequireXeTeX   % MUST compile with XeLaTeX (fontspec); pdfLaTeX gives a clear error here
+\usepackage{fontspec}
+\usepackage{ragged2e}
+\usepackage{microtype}
+
+% Figures live in the paper project and are referenced below as fig/*.pdf.
+\graphicspath{{E:/paper_tian/毕设/acm_mm/26MM_LFASSA_CMR/}}
+
+\setbeamertemplate{navigation symbols}{}
+
+% ---- Palette (ACM MM style: dark header, high contrast) ----
+\definecolor{acmnavy}{HTML}{16324F}
+\definecolor{acmblue}{HTML}{2E6DA4}
+\definecolor{acmsteel}{HTML}{4A7BA8}
+\definecolor{acmred}{HTML}{C0392B}
+\definecolor{acmorange}{HTML}{D9822B}
+\definecolor{lightbg}{HTML}{F2F5F8}
+\definecolor{midgray}{HTML}{5A6473}
+\definecolor{rulegray}{HTML}{D5DCE3}
+
+\setbeamercolor{headline}{fg=white,bg=acmnavy}
+\setbeamercolor{footline}{fg=white,bg=acmnavy}
+\setbeamercolor{block title}{fg=white,bg=acmblue}
+\setbeamercolor{block body}{fg=black,bg=white}
+\setbeamercolor{block alerted title}{fg=white,bg=acmred}
+\setbeamercolor{block alerted body}{fg=black,bg=lightbg}
+\setbeamercolor{itemize item}{fg=acmblue}
+\setbeamercolor{itemize subitem}{fg=acmsteel}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{structure}{fg=acmnavy}
+
+% ---- Fonts: prefer Fira Sans, fall back silently ----
+\IfFontExistsTF{Fira Sans}{%
+  \setsansfont{Fira Sans}[Scale=1.0]%
+}{%
+  \IfFontExistsTF{Source Sans Pro}{\setsansfont{Source Sans Pro}}{}%
+}
+
+% ---- Proper A0 font sizes (scale = 1.0 => literal pt) ----
+\setbeamerfont{headline}{family=\sffamily}
+\setbeamerfont{block title}{size=\fontsize{44}{52}\selectfont,series=\bfseries}
+\setbeamerfont{block body}{size=\fontsize{32}{40}\selectfont}
+\setbeamerfont{itemize/enumerate body}{size=\fontsize{32}{40}\selectfont}
+\setbeamerfont{itemize/enumerate subbody}{size=\fontsize{26}{32}\selectfont}
+% caption / annotation font (default \footnotesize is ~12pt: far too small on A0)
+\newcommand{\capfont}{\fontsize{24}{30}\selectfont}
+
+% ---- Custom headline: full-width centred title, no logos ----
+\setbeamertemplate{headline}{%
+  \leavevmode%
+  \begin{beamercolorbox}[wd=\paperwidth,sep=1.1cm]{headline}%
+    \centering
+    {\fontsize{62}{72}\selectfont\bfseries Dynamic Late Fusion Multiple Kernel $k$-means Clustering\\[0.18cm]
+     via Adaptive Sample Selection and Alignment\par}%
+    \vspace{0.5cm}%
+    {\fontsize{32}{38}\selectfont Zhirong Tian~~\textbullet~~Yi Zhang$^{\ast}$~~\textbullet~~Weixuan Liang~~\textbullet~~Miaomiao Li~~\textbullet~~Xinwang Liu\par}%
+    \vspace{0.22cm}%
+    {\fontsize{24}{28}\selectfont National University of Defense Technology~~\textbullet~~Changsha University~~\textbullet~~Changsha, Hunan, China\par}%
+    \vspace{0.18cm}%
+    {\fontsize{20}{24}\selectfont $^{\ast}$Corresponding author~~~~\textbullet~~~~\textbf{ACM Multimedia 2027}~~~~\textbullet~~~~Rio de Janeiro, Brazil\par}%
+  \end{beamercolorbox}%
+}
+
+% ---- Footline (bottom band) ----
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \begin{beamercolorbox}[wd=\paperwidth,sep=0.55cm]{footline}%
+    \centering%
+    {\fontsize{24}{29}\selectfont LF-ASSA~~\textbullet~~Adaptive Sampling + Dynamic Late Fusion for Scalable MKKM~~\textbullet~~{Contact:~tianzhirong21@nudt.edu.cn}~~\textbullet~{ACM Multimedia 2027}\par}%
+  \end{beamercolorbox}%
+}
+
+% Block template: title vertically centered, left aligned; beamerposter colsep-free.
+\setbeamertemplate{block begin}{%
+  \par\vskip1.5cm%
+  \begin{beamercolorbox}[wd=\textwidth,leftskip=0.5cm,rightskip=0.5cm]{block title}%
+    \parbox[c][3.2cm]{\linewidth}{\raggedright\usebeamerfont{block title}\insertblocktitle}%
+  \end{beamercolorbox}%
+  {\parskip0pt\par}%
+  \usebeamerfont{block body}%
+  \begin{beamercolorbox}[wd=\textwidth,leftskip=0.6cm,rightskip=0.6cm,vmode]{block body}%
+    \justifying\setlength{\parskip}{0.3cm}%
+}
+\setbeamertemplate{block end}{\par\end{beamercolorbox}\vskip0.3cm}
+
+\setbeamertemplate{block alerted begin}{%
+  \par\vskip1.5cm%
+  \begin{beamercolorbox}[wd=\textwidth,leftskip=0.5cm,rightskip=0.5cm]{block alerted title}%
+    \parbox[c][3.2cm]{\linewidth}{\raggedright\usebeamerfont{block title}\insertblocktitle}%
+  \end{beamercolorbox}%
+  {\parskip0pt\par}%
+  \usebeamerfont{block body}%
+  \begin{beamercolorbox}[wd=\textwidth,leftskip=0.6cm,rightskip=0.6cm,vmode]{block alerted body}%
+    \justifying\setlength{\parskip}{0.3cm}%
+}
+\setbeamertemplate{block alerted end}{\par\end{beamercolorbox}\vskip0.3cm}
+
+\begin{document}
+\begin{frame}[t]
+\begin{columns}[t]
+
+%================ LEFT COLUMN =================
+\begin{column}{0.305\paperwidth}
+
+\begin{block}{Motivation}
+Multiple kernel $k$-means clustering (MKKM) maps samples to high-dimensional
+kernel spaces and is widely used in multimedia analysis. However, two
+\textbf{structural bottlenecks} persist:
+\begin{itemize}
+  \item \textbf{Computational wall.} Reconstructing the clustering partition
+        relies on eigendecomposition of an $n\times n$ kernel matrix, incurring
+        $\mathcal{O}(n^3)$ cost that blocks large-scale application.
+  \item \textbf{Sampling blind spot.} Anchor/sampling-based MKKM reduces cost
+        but lacks theoretical guarantees on information loss, and is sensitive
+        to initialization. No analysis quantifies how well the sampled
+        partition approximates the full-sample ground truth.
+\end{itemize}
+\textbf{Goal:} Investigate a dynamic sampling-based MKKM algorithm that reduces computational complexity and extends MKKM to large-scale data, while providing both theoretical and empirical guarantees for the sampling mechanism.
+\end{block}
+
+\begin{block}{LF-ASSA Framework}
+\centering
+\includegraphics[width=\linewidth]{fig/flowchart.pdf}\\[0.2cm]
+{\capfont\itshape Three modules: adaptive sampling matrices
+$\{\mathbf{S}_p\}$ $\to$ SVD-based partition reconstruction $\{\mathbf{U}_p\}$
+$\to$ aligned late fusion into consensus $\mathbf{U}^\ast$ with feedback.}
+
+\vspace{0.3cm}
+\textbf{Objective (LF-ASSA):}
+\begin{equation*}
+\begin{aligned}
+\max_{\mathcal{L}}~&\sum_{p=1}^{m}\Big[\operatorname{Tr}\!\big(\mathbf{U}_p^{\!\top}\mathbf{K}_p\mathbf{S}_p\mathbf{V}_p\big)
++\lambda\beta_p\,\operatorname{Tr}\!\big(\mathbf{T}_p^{\!\top}\mathbf{U}_p^{\!\top}\mathbf{U}^{\!\ast}\big)\Big]\\
+\text{s.t. }~
+&\mathbf{U}_p^{\!\top}\mathbf{U}_p=\mathbf{I}_k,\;
+ \mathbf{V}_p^{\!\top}\mathbf{V}_p=\mathbf{I}_k,\;
+ \mathbf{S}_p^{\!\top}\mathbf{S}_p=\mathbf{I}_s,\\
+&\mathbf{T}_p\mathbf{1}=\mathbf{1},\;
+ \mathbf{T}_p^{\!\top}\mathbf{1}=\mathbf{1},\;
+ (\mathbf{U}^{\!\ast})^{\!\top}\mathbf{U}^{\!\ast}=\mathbf{I}_k,\;
+ \boldsymbol{\beta}\in\nabla
+\end{aligned}
+\end{equation*}
+\vspace{-0.2cm}
+{\capfont $\mathcal{L}=\{\mathbf{U}_p,\mathbf{V}_p,\mathbf{S}_p,\mathbf{T}_p;\boldsymbol{\beta},\mathbf{U}^{\!\ast}\}$,
+$\nabla=\{\boldsymbol{\beta}\in\mathbb{R}^{m}\mid\sum_{p}\beta_p^2=1,\beta_p\ge0\}$.
+First term: novel adaptive-sampling KKM paradigm; second term: doubly-stochastic late-fusion alignment.}
+\end{block}
+
+\begin{block}{Our Contributions}
+\begin{itemize}
+  \item We propose a novel MKKM named \textbf{LF-ASSA}, which alternatively
+        optimizes sampling matrices and clustering partitions to achieve mutual
+        promotion.
+  \item We provide a \textbf{theoretical analysis} demonstrating the advantages
+        of our adaptive sampling mechanism over random sampling in terms of
+        \textbf{energy capture}.
+  \item Comprehensive experiments across datasets of different scales verify the
+        effectiveness and efficiency of the proposed method; ablation and
+        extended experiments confirm the superiority of the \textbf{dynamic
+        sampling mechanism} over conventional approaches.
+\end{itemize}
+\end{block}
+
+%\begin{block}{Key References}
+%{\setlength{\parskip}{0.22cm}\fontsize{19}{24}\selectfont
+%[1] X. Liu. \textit{SimpleMKKM: Simple multiple kernel $k$-means.}
+%IEEE Trans.\ Pattern Anal.\ Mach.\ Intell., 45(4): 5174--5186, 2022.
+%
+%[2] S. Wang, X. Liu, et al. \textit{Multi-view clustering via late fusion
+%alignment maximization.} IJCAI, 3778--3784, 2019.
+%
+%[3] S. Wang, X. Liu, et al. \textit{Align then fusion: Generalized large-scale
+%multi-view clustering with anchor matching correspondences.} NeurIPS,
+%35: 5882--5895, 2022.
+%
+%[4] X. Liu, Y. Dou, J. Yin, L. Wang, E. Zhu. \textit{Multiple kernel $k$-means
+%clustering with matrix-induced regularization.} AAAI, 2016.
+%\par}
+%\end{block}
+
+\end{column}
+
+%================ MIDDLE COLUMN =================
+\begin{column}{0.305\paperwidth}
+
+\begin{block}{Alternating Optimization}
+\vspace{0.1cm}
+A six-stage update; %each sub-problem admits an SVD / analytic solution:
+\begin{enumerate}
+  \item $\mathbf{S}_p=\mathbf{P}_s\mathbf{Q}_s^{\!\top}$\\
+        {\capfont top-$s$ left/right singular vectors of
+        $\mathbf{K}_p^{\!\top}\mathbf{U}_p\mathbf{V}_p^{\!\top}$}
+  \item $\mathbf{U}_p\leftarrow\mathrm{SVD}(\mathbf{D}),\;
+        \mathbf{D}=\mathbf{K}_p\mathbf{S}_p\mathbf{V}_p+\lambda\beta_p\mathbf{U}^{\!\ast}\mathbf{T}_p^{\!\top}$
+  \item $\mathbf{V}_p\leftarrow\mathrm{SVD}(\mathbf{S}_p^{\!\top}\mathbf{K}_p^{\!\top}\mathbf{U}_p)$
+  \item $\mathbf{T}_p\leftarrow$ closed form\\
+        {\capfont $\mathbf{T}=\mathbf{R}+\big(\tfrac{1}{k}\mathbf{I}+\tfrac{\mathbf{1}^{\!\top}\mathbf{R}\mathbf{1}}{k^2}-\tfrac{1}{k}\mathbf{R}\big)\mathbf{1}\mathbf{1}^{\!\top}-\tfrac{1}{k}\mathbf{1}\mathbf{1}^{\!\top}\mathbf{R},\;\mathbf{R}_p=\mathbf{U}_p^{\!\top}\mathbf{U}^{\!\ast}$}
+  \item $\beta_p=\delta_p\big/\sqrt{\textstyle\sum_{q=1}^{m}\delta_q^2},\;
+        \delta_p=\operatorname{Tr}\!\big((\mathbf{U}^{\!\ast})^{\!\top}\mathbf{U}_p\mathbf{T}_p\big)$
+  \item $\mathbf{U}^{\!\ast}\leftarrow\mathrm{SVD}\!\big(\textstyle\sum_{p=1}^{m}\beta_p\mathbf{U}_p\mathbf{T}_p\big)$
+\end{enumerate}
+\vspace{0.1cm}
+\textbf{Output:} run $k$-means on $\mathbf{U}^{\!\ast}$ for the final labels.
+\end{block}
+
+\begin{block}{Clustering Performance (ACC \%)}
+\vspace{0.1cm}
+\centering
+\renewcommand{\arraystretch}{1.9}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Dataset} & \textbf{LF-ASSA (Ours)} & \textbf{Best Baseline} \\
+\midrule
+3Sources      & \textcolor{acmred}{\textbf{50.86}} & 47.34 (LFMVC) \\
+Football      & \textcolor{acmred}{\textbf{82.94}} & 80.79 (LFMVC) \\
+Caltech101    & \textcolor{acmred}{\textbf{31.83}} & 31.38 (LFMVC) \\
+Citeseer      & \textcolor{acmred}{\textbf{54.08}} & 48.35 (LFMVC) \\
+4Area         & \textcolor{acmblue}{\textbf{75.31}} & 82.55 (SAL-SMKKM) \\
+Flower102     & \textcolor{acmred}{\textbf{42.59}} & 38.95 (LFMVC) \\
+YoutubeFace   & \textcolor{acmred}{\textbf{26.04}} & 25.15 (LFMVC) \\
+ALOI-100      & \textcolor{acmred}{\textbf{67.54}} & 67.14 (SMKKM) \\
+\bottomrule
+\end{tabular}\\[0.25cm]
+{\capfont\itshape Red: optimal. Blue: sub-optimal. Compared against 9 baselines
+(MKKM, RMKKM, LFMVC, SMKKM, SAL-SMKKM, SMKKM-SVD, AEVC, ALPC, INMKC).}
+\end{block}
+
+\begin{block}{Efficiency}
+\centering
+\vspace{0.4cm}
+\includegraphics[width=\linewidth]{fig/runningtime.pdf}\\[0.15cm]
+\begin{itemize}
+  \item Average runtime on small datasets; \textbf{top-3 on large-scale}
+        ($n\ge10{,}000$).
+  \item \textbf{Fastest on ALOI-100} among all compared methods.
+  \item Two-step iterative SVD is cheaper than a single full
+        eigendecomposition $\Rightarrow$ scalable to large $n$.
+\end{itemize}
+\end{block}
+
+\begin{block}{Hyperparameter Sensitivity}
+\centering
+\vspace{0.4cm}
+\includegraphics[width=\linewidth]{fig/parameters.pdf}\\[0.15cm]
+Robust to the balance parameter $\lambda$ over a wide range (e.g.\
+Caltech101); a performance trough appears on Flower102 at $\lambda=2^3$.
+\end{block}
+
+\end{column}
+
+%================ RIGHT COLUMN =================
+\begin{column}{0.305\paperwidth}
+
+\begin{block}{Adaptive Sampling (Single-View)}
+We learn a view-specific sampling matrix $\mathbf{S}_p\in\mathbb{R}^{n\times s}$
+so the selected anchors $\mathbf{A}_p=\mathbf{K}_p\mathbf{S}_p$ adapt to the
+data distribution:
+\begin{equation*}
+\begin{aligned}
+\max_{\mathbf{U}_p,\mathbf{V}_p,\mathbf{S}_p}\;&
+\operatorname{Tr}\!\big(\mathbf{U}_p^{\!\top}\mathbf{K}_p\mathbf{S}_p\mathbf{V}_p\big)\\[0.15cm]
+\text{s.t. }\;&
+\mathbf{U}_p^{\!\top}\mathbf{U}_p=\mathbf{I}_k,\;\;
+\mathbf{V}_p^{\!\top}\mathbf{V}_p=\mathbf{I}_k,\;\;
+\mathbf{S}_p^{\!\top}\mathbf{S}_p=\mathbf{I}_s.
+\end{aligned}
+\end{equation*}
+Closed form via truncated SVD:
+$\mathbf{S}_p=\mathbf{P}_s\mathbf{Q}_s^{\!\top}$, where $\mathbf{P}_s,\mathbf{Q}_s$
+are the top-$s$ left / right singular vectors of
+$\mathbf{K}_p^{\!\top}\mathbf{U}_p\mathbf{V}_p^{\!\top}$.
+\vspace{0.25cm}
+\centering
+\includegraphics[width=\linewidth]{fig/energy_capture.pdf}\\[0.15cm]
+{\capfont\itshape Adaptive sampling (blue) stays near the full-sample KKM
+baseline as $s$ grows, while random sampling (red) decays with wider variance
+$\Rightarrow$ robust to initialization.}
+\end{block}
+
+\begin{block}{Convergence}
+\centering
+\includegraphics[width=\linewidth]{fig/cls_iteration.pdf}\\[0.15cm]
+{\capfont\itshape Clustering performance evolves and stabilizes
+within 40 iterations; minor overfitting is suppressed by the stopping criterion.}
+\end{block}
+
+\begin{block}{Cluster Visualization (t-SNE)}
+\centering
+\includegraphics[width=\linewidth]{fig/tsne.pdf}\\[0.15cm]
+{\capfont\itshape t-SNE of two kernel views vs.\ LF-ASSA partition on
+\textbf{4Area}: the learned $\mathbf{U}^{\!\ast}$ reveals clean cluster structure.}
+\end{block}
+
+\begin{block}{Ablation Study (ACC \%)}
+\centering
+{\fontsize{19}{24}\selectfont
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Method} & \textbf{L1} & \textbf{L2} & \textbf{L3} & \textbf{L4} & \textbf{L5} & \textbf{Ours} \\
+\midrule
+Football   & 61.27 & 71.39 & \textcolor{acmblue}{\textbf{82.04}} & 80.65 & 75.14 & \textcolor{acmred}{\textbf{82.94}} \\
+Citeseer   & 40.67 & 38.46 & 39.48 & \textcolor{acmblue}{\textbf{42.63}} & 25.61 & \textcolor{acmred}{\textbf{54.08}} \\
+Flower102  & 32.52 & 32.45 & 40.59 & \textcolor{acmblue}{\textbf{40.88}} & 40.18 & \textcolor{acmred}{\textbf{42.59}} \\
+ALOI-100   & 66.00 & \textcolor{acmblue}{\textbf{66.21}} & 65.89 & 66.00 & 65.04 & \textcolor{acmred}{\textbf{67.54}} \\
+\bottomrule
+\end{tabular}\par}
+\vspace{0.2cm}
+\begin{itemize}
+  \item \textbf{L5} (fixed random sampling) is consistently the worst variant
+        $\Rightarrow$ \textbf{dynamic adaptive sampling} is a key contributor;
+        every component (L1--L4) adds gains.
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Conclusion}
+\begin{itemize}
+  \item \textbf{LF-ASSA} jointly optimizes adaptive sampling and aligned late
+        fusion.
+  \item Replaces eigendecomposition with two SVDs $\Rightarrow$ scalable, with
+        theoretical energy-capture guarantees over random sampling.
+  \item Ablation confirms every component (esp.\ dynamic sampling, L5) matters.
+\end{itemize}
+\end{alertblock}
+
+\end{column}
+
+\end{columns}
+\end{frame}
+\end{document}
